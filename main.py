@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 
 app = FastAPI() # Estamos creando una instancia de FastApi
-app.title = "Mi apliación con FastAPI"
+app.title = "Mi aplicaión con FastAPI"
 app.version = "0.0.1"
 
 
