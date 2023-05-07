@@ -5,7 +5,7 @@ from typing import Optional, List
 
 
 app = FastAPI() # Estamos creando una instancia de FastApi
-app.title = "Mi aplicaión con FastAPI"
+app.title = "Mi aplicación con FastAPI"
 app.version = "0.0.1"
 
 class Movie(BaseModel):
@@ -96,4 +96,3 @@ def delete_movie(id: int) -> dict:
             movies.remove(item)
             return JSONResponse(status_code=200, content={"message": "Se ha eliminado la pelicula"})
 
-# Para correr la aplicacion usamos el comando 'uvicorn main:app' y si queremos que se recargue automaticamente agregamos depues de app '--reload' y para asignarle un puerto '--port numero_del_puerto' y para que se pueda ver en toda la red '--host 0.0.0.0
