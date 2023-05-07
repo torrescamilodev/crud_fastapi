@@ -1,10 +1,32 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Body, Path, Query
+from fastapi.responses import HTMLResponse, JSONResponse
+from pydantic import BaseModel, Field
+from typing import Optional, List
 
 
 app = FastAPI() # Estamos creando una instancia de FastApi
 app.title = "Mi aplicaión con FastAPI"
 app.version = "0.0.1"
+
+class Movie(BaseModel):
+    id: Optional[int] = None
+    title: str = Field(min_length=5, max_length=15)
+    overview: str = Field(min_length=15, max_length=50)
+    year: int = Field(le=2022)
+    rating:float = Field(default=10, ge=1, le=10)
+    category:str = Field(default='Categoría', min_length=5, max_length=15)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1,
+                "title": "Mi película",
+                "overview": "Descripción de la película",
+                "year": 2022,
+                "rating": 9.8,
+                "category" : "Acción"
+            }
+        }
 
 movies = [
     {
@@ -30,24 +52,48 @@ movies = [
 def message():
     return HTMLResponse('<h1>Hello world</h1>')
 
-@app.get('/movies', tags=['movies'])
-def get_movies():
-    return movies
+@app.get('/movies', tags=['movies'], response_model=List[Movie], status_code=200)
+def get_movies() -> List[Movie]:
+    return JSONResponse(status_code=200, content=movies)
 
-@app.get('/movies/{id}', tags=['movies'])
-def get_movie(id: int):
+@app.get('/movies/{id}', tags=['movies'], response_model=Movie)
+def get_movie(id: int = Path(ge=1, le=2000)) -> Movie:
     #Este es un parametro de ruta donde se pide un valor
     
-    # for item in movies:
-    #     if item["id"] == id:
-    #         return item
-    # return []
-    return next((item for item in movies if item["id"] == id), {})
+    for item in movies:
+        if item["id"] == id:
+            return JSONResponse(content=item)
+    return JSONResponse(status_code=404, content=[])
+    # return JSONResponse((next((item for item in movies if item["id"] == id),  {})))
 #Se retona un dictionary comprehension La sintaxis completa item for item in movies puede leerse como "para cada item en la lista movies, incluir item en el nuevo diccionario". En otras palabras, estamos creando un nuevo diccionario que contiene todos los elementos de la lista movies, pero en un formato de diccionario.
 
-@app.get('/movies/', tags=['movies'])
-def get_movies_by_category(category:str, year:int):
-    #Como el parametro no se especifico o definio en la url, en el parametro de ruta  automaticmente fastAPI va  detectarlo como un parametro query
-    return category
+@app.get('/movies/', tags=['movies'], response_model=List[Movie])
+#Como el parametro no se especifico o definio en la url, en el parametro de ruta  automaticmente fastAPI va  detectarlo como un parametro query que es una serie de clave valor
+def get_movies_by_category(category: str = Query(min_length=5, max_length=15)) -> List[Movie]:
+    data = [item for item in movies if item['category'] == category]    
+    return JSONResponse(content=data)
+
+@app.post('/movies', tags=['movies'], response_model=dict, status_code=201)
+def create_movie(movie: Movie) -> dict:
+    movies.append(movie)
+    return JSONResponse(status_code=201, content={"message": "Se ha registrado la pelicula"})
+
+@app.put('/movies/{id}', tags=['movies'], response_model=dict, status_code=200)
+def update_movie(id: int, movie: Movie) -> dict:
+	for item in movies:
+		if item["id"] == id:
+			item['title'] = movie.title
+			item['overview'] = movie.overview
+			item['year'] = movie.year
+			item['rating'] = movie.rating
+			item['category'] = movie.category
+			return JSONResponse(status_code=200, content={"message": "Se ha actualizado la pelicula"})
+
+@app.delete('/movies/{id}', tags=['movies'], response_model=dict, status_code=200)
+def delete_movie(id: int) -> dict:
+    for item in movies:
+        if item["id"] == id:
+            movies.remove(item)
+            return JSONResponse(status_code=200, content={"message": "Se ha eliminado la pelicula"})
 
 # Para correr la aplicacion usamos el comando 'uvicorn main:app' y si queremos que se recargue automaticamente agregamos depues de app '--reload' y para asignarle un puerto '--port numero_del_puerto' y para que se pueda ver en toda la red '--host 0.0.0.0
