@@ -23,7 +23,7 @@ Python siempre fue conocido por ser un lenguaje de programacion un poco lento al
 - pip install fastapi (FastApi)
 - pip install uvicorn
 
-*Para correr la aplicacion: comando 'uvicorn main:app' para recargar automaticamente '--reload', para asignarle un puerto '--port numero_del_puerto', para que se pueda ver en toda la red '--host 0.0.0.0*
+****Para correr la aplicacion:*** *comando 'uvicorn main:app' para recargar automaticamente '--reload', para asignarle un puerto '--port numero_del_puerto', para que se pueda ver en toda la red '--host 0.0.0.0*
 
 ***Documentación automatica con Swagger:*** /docs, muestra la documentacion con las rutas creadas y su URL, los metodos que ejecutan, que contienen la información de los parametros, respuestas y los codigos de respuestas, y se puede ejecutar.
 
