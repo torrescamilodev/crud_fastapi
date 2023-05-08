@@ -29,8 +29,10 @@ Python siempre fue conocido por ser un lenguaje de programacion un poco lento al
 
 ***Tags:*** Sirven para agrupar determinadas rutas en las aplicaiones.
 
+***Parametros Query:*** Son una serie de clave y valor que permiten extender mas las busquedas, ya sea en una BD o en el ejemplo del repositorio.
 
-pydantic nos permite crear un esquema de datos que contenga toda la informacion relacionada a una pelicula.
+
+***Esquemas:*** pydantic nos permite crear un esquema de datos que contenga toda la informacion relacionada a una pelicula.
 
 Errores que muestras fasAPI: value error
 validaciones con pydantic Field
